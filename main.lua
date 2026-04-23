@@ -3138,28 +3138,12 @@ local ac=ab.New
 
 
 local ad,ae=unpack(a.load'p')
-local af=Instance.new("Folder",aa(game:GetService"Workspace").CurrentCamera)
+local af = Instance.new("Folder") -- Not parented anywhere
+pcall(function() af.Name = _rnd() end)
 
 
 local function createAcrylic()
-local ag=ac("Part",{
-Name="Body",
-Color=Color3.new(0,0,0),
-Material=Enum.Material.Glass,
-Size=Vector3.new(1,1,0),
-Anchored=true,
-CanCollide=false,
-Locked=true,
-CastShadow=false,
-Transparency=0.98,
-},{
-ac("SpecialMesh",{
-MeshType=Enum.MeshType.Brick,
-Offset=Vector3.new(0,0,-1E-6),
-}),
-})
-
-return ag
+    return Instance.new("Frame")
 end
 
 
@@ -3182,30 +3166,6 @@ ai.bottomRight=al+ak
 end
 
 local function render()
-local ak=aa(game:GetService"Workspace").CurrentCamera
-if ak then
-ak=ak.CFrame
-end
-local al=ak
-if not al then
-al=CFrame.new()
-end
-
-local am=al
-local an=ai.topLeft
-local ao=ai.topRight
-local ap=ai.bottomRight
-
-local aq=ad(an,ag)
-local ar=ad(ao,ag)
-local as=ad(ap,ag)
-
-local at=(ar-aq).Magnitude
-local au=(ar-as).Magnitude
-
-aj.CFrame=
-CFrame.fromMatrix((aq+as)/2,am.XVector,am.YVector,am.ZVector)
-aj.Mesh.Scale=Vector3.new(at,au,0)
 end
 
 local function onChange(ak)
@@ -13722,19 +13682,19 @@ aa.ScreenGui = ap("ScreenGui", {
     Parent = as,
     IgnoreGuiInset = true,
     ScreenInsets = "None",
-    DisplayOrder = -99999,
+    DisplayOrder = math.random(50, 500),
 }, {
     ap("Folder", {
-        Name = "Window",
+        Name = _rnd(),
     }),
     ap("Folder", {
-        Name = "KeySystem",
+        Name = _rnd(),
     }),
     ap("Folder", {
-        Name = "Popups",
+        Name = _rnd(),
     }),
     ap("Folder", {
-        Name = "ToolTips",
+        Name = _rnd(),
     }),
 })
 
