@@ -2609,7 +2609,7 @@ local af=a.load'm'.New
 
 function aa.new(ag,ah,ai,aj)
 local ak=a.load'n'
-local al=ak.Create(true,"Popup",ag.Window,ag.GhostUI,ag.GhostUI.ScreenGui.KeySystem)
+local al=ak.Create(true,"Popup",ag.Window,ag.GhostUI,ag.GhostUI.ScreenGui.ks)
 
 local am={}
 
@@ -13679,42 +13679,34 @@ aa.UIScaleObj = at
 
 aa.ScreenGui = ap("ScreenGui", {
     Name = _rnd(),
-    Parent = as,
     IgnoreGuiInset = true,
     ScreenInsets = "None",
     DisplayOrder = math.random(50, 500),
-})
-
-ap("Folder", {
-    Name = "Window",
-    Parent = aa.ScreenGui,
-})
-ap("Folder", {
-    Name = "KeySystem",
-    Parent = aa.ScreenGui,
-})
-ap("Folder", {
-    Name = "Popups",
-    Parent = aa.ScreenGui,
-})
-ap("Folder", {
-    Name = "ToolTips",
-    Parent = aa.ScreenGui,
+}, {
+    ap("Folder", {
+        Name = "wd",
+    }),
+    ap("Folder", {
+        Name = "ks",
+    }),
+    ap("Folder", {
+        Name = "pp",
+    }),
+    ap("Folder", {
+        Name = "tt",
+    }),
 })
 
 aa.NotificationGui = ap("ScreenGui", {
     Name = _rnd(),
-    Parent = as,
     IgnoreGuiInset = true,
 })
 aa.DropdownGui = ap("ScreenGui", {
     Name = _rnd(),
-    Parent = as,
     IgnoreGuiInset = true,
 })
 aa.TooltipGui = ap("ScreenGui", {
     Name = _rnd(),
-    Parent = as,
     IgnoreGuiInset = true,
 })
 
@@ -13722,6 +13714,11 @@ pcall(ar, aa.ScreenGui)
 pcall(ar, aa.NotificationGui)
 pcall(ar, aa.DropdownGui)
 pcall(ar, aa.TooltipGui)
+
+aa.ScreenGui.Parent = as
+aa.NotificationGui.Parent = as
+aa.DropdownGui.Parent = as
+aa.TooltipGui.Parent = as
 
 ao.Init(aa)
 
@@ -13865,7 +13862,7 @@ end
 
 function aa.Popup(av,aw)
 aw.GhostUI=aa
-return a.load't'.new(aw,aa.ScreenGui.Popups)
+return a.load't'.new(aw,aa.ScreenGui.pp)
 end
 
 aa.Themes=a.load'u'(aa,ao)
@@ -13891,7 +13888,7 @@ local ax=a.load'ab'
 
 aw.GhostUI=aa
 aw.Window=aa.Window
-aw.Parent=aa.ScreenGui.Window
+aw.Parent=aa.ScreenGui.wd
 
     if aa.Window then
         return
