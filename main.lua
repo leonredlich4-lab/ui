@@ -13706,63 +13706,66 @@ local ap=ao.New
 
 local aq=a.load's'
 
-local ar=protectgui or(syn and syn.protect_gui)or function()end
+local function _rnd()
+    local c = "abcdefghijklmnopqrstuvwxyz"
+    local s = ""
+    for i = 1, 12 do
+        local r = math.random(1, #c)
+        s = s .. c:sub(r, r)
+    end
+    return s
+end
 
-local as=gethui and gethui()or(aj or al:WaitForChild"PlayerGui")
+local ar = protectgui or (syn and syn.protect_gui) or function() end
+local as = (gethui and gethui()) or (game:GetService("CoreGui")) or (aj or al:WaitForChild("PlayerGui"))
 
-local at=ap("UIScale",{
-Scale=aa.UIScale,
+local at = ap("UIScale", {
+    Scale = aa.UIScale,
 })
 
-aa.UIScaleObj=at
+aa.UIScaleObj = at
 
-aa.ScreenGui=ap("ScreenGui",{
-Name="WindUI",
-Parent=as,
-IgnoreGuiInset=true,
-ScreenInsets="None",
-DisplayOrder=-99999,
-},{
-
-ap("Folder",{
-Name="Window",
-}),
-
-
-
-
-
-
-ap("Folder",{
-Name="KeySystem",
-}),
-ap("Folder",{
-Name="Popups",
-}),
-ap("Folder",{
-Name="ToolTips",
-}),
+aa.ScreenGui = ap("ScreenGui", {
+    Name = _rnd(),
+    Parent = as,
+    IgnoreGuiInset = true,
+    ScreenInsets = "None",
+    DisplayOrder = -99999,
+}, {
+    ap("Folder", {
+        Name = "Window",
+    }),
+    ap("Folder", {
+        Name = "KeySystem",
+    }),
+    ap("Folder", {
+        Name = "Popups",
+    }),
+    ap("Folder", {
+        Name = "ToolTips",
+    }),
 })
 
-aa.NotificationGui=ap("ScreenGui",{
-Name="WindUI/Notifications",
-Parent=as,
-IgnoreGuiInset=true,
+aa.NotificationGui = ap("ScreenGui", {
+    Name = _rnd(),
+    Parent = as,
+    IgnoreGuiInset = true,
 })
-aa.DropdownGui=ap("ScreenGui",{
-Name="WindUI/Dropdowns",
-Parent=as,
-IgnoreGuiInset=true,
+aa.DropdownGui = ap("ScreenGui", {
+    Name = _rnd(),
+    Parent = as,
+    IgnoreGuiInset = true,
 })
-aa.TooltipGui=ap("ScreenGui",{
-Name="WindUI/Tooltips",
-Parent=as,
-IgnoreGuiInset=true,
+aa.TooltipGui = ap("ScreenGui", {
+    Name = _rnd(),
+    Parent = as,
+    IgnoreGuiInset = true,
 })
-ar(aa.ScreenGui)
-ar(aa.NotificationGui)
-ar(aa.DropdownGui)
-ar(aa.TooltipGui)
+
+pcall(ar, aa.ScreenGui)
+pcall(ar, aa.NotificationGui)
+pcall(ar, aa.DropdownGui)
+pcall(ar, aa.TooltipGui)
 
 ao.Init(aa)
 
@@ -14050,89 +14053,4 @@ end
 return b
 end
 
--- ================================================================
---  ANTI-DETECT PATCH v4  (WindUI Library oben = unverändert)
---  - KEIN Instance.new Hook (read-only in Roblox → Fehler)
---  - gethui() für alle gängigen Executoren (Volt, Potassium, KRNL…)
---  - protect_gui Fallback für Synapse X
---  - Zufälliger ScreenGui-Name pro Session
--- ================================================================
-
--- ================================================================
---  ANTI-DETECT PATCH v5  (WindUI Library oben = unverändert)
---  - Nutzt eine Proxy-Tabelle um "readonly table" Fehler zu vermeiden
---  - gethui() für High UNC Executoren (Volt, Potassium, etc.)
--- ================================================================
-
-local proxy = setmetatable({}, {
-    __index = function(_, k)
-        return aa[k]
-    end,
-    __newindex = function(_, k, v)
-        pcall(function() aa[k] = v end)
-    end
-})
-
-do
-    local function rnd(n)
-        local c = "abcdefghijklmnopqrstuvwxyz"
-        local s = ""
-        for _ = 1, n do s = s .. c:sub(math.random(1,#c), math.random(1,#c)) end
-        return s
-    end
-
-    local function protect(sg)
-        if not sg then return end
-        pcall(function() sg.Name = rnd(12) end)
-
-        if type(gethui) == "function" then
-            local ok, h = pcall(gethui)
-            if ok and h then
-                pcall(function() sg.Parent = h end)
-                return
-            end
-        end
-
-        if type(protect_gui) == "function" then
-            pcall(protect_gui, sg)
-            return
-        end
-
-        local ok, syn = pcall(function()
-            return rawget(getfenv and getfenv(0) or _ENV or {}, "syn")
-        end)
-        if ok and type(syn) == "table" and type(syn.protect_gui) == "function" then
-            pcall(syn.protect_gui, syn, sg)
-        end
-    end
-
-    function proxy:CreateWindow(cfg, ...)
-        -- Wir leiten den Aufruf an das Original weiter, mit 'aa' als self
-        local win = aa.CreateWindow(aa, cfg, ...)
-        
-        -- Da wir nicht wissen, wo WindUI die GUI speichert, iterieren wir
-        -- über CoreGui und schützen alle neuen ScreenGuis von WindUI
-        pcall(function()
-            -- Direkt falls es win.ScreenGui gibt
-            if win and win.ScreenGui then protect(win.ScreenGui) end
-            if aa.ScreenGui then protect(aa.ScreenGui) end
-            
-            -- Fallback: Alle ScreenGuis im Spiel untersuchen
-            local cg = game:GetService("CoreGui")
-            for _, v in ipairs(cg:GetChildren()) do
-                if v:IsA("ScreenGui") then
-                    -- WindUI benutzt oft interne Properties/Namen
-                    -- Protect everything that looks like it could be it
-                    if #v:GetChildren() > 0 then
-                        -- Es ist sicherer, die GUI gezielt zu suchen, aber wir
-                        -- hooken hier nicht, also protecten wir die GUI von win
-                    end
-                end
-            end
-        end)
-        
-        return win
-    end
-end
-
-return proxy
+return aa
