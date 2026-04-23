@@ -13685,16 +13685,16 @@ aa.ScreenGui = ap("ScreenGui", {
     DisplayOrder = math.random(50, 500),
 }, {
     ap("Folder", {
-        Name = _rnd(),
+        Name = "Window",
     }),
     ap("Folder", {
-        Name = _rnd(),
+        Name = "KeySystem",
     }),
     ap("Folder", {
-        Name = _rnd(),
+        Name = "Popups",
     }),
     ap("Folder", {
-        Name = _rnd(),
+        Name = "ToolTips",
     }),
 })
 
