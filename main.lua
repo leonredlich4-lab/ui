@@ -14051,32 +14051,95 @@ return b
 end
 
 -- ================================================================
---  ANTI-DETECT PATCH  (alles oben = unveränderte WindUI Library)
---  Nur diese ~20 Zeilen wurden hinzugefügt.
---
---  Nach jedem CreateWindow() wird die ScreenGui in den
---  versteckten gethui()-Container verschoben, den das Spiel
---  mit :GetChildren() nicht sehen kann.
---  Fallback: syn.protect_gui → normale CoreGui
+--  ANTI-DETECT PATCH v3  (WindUI Library oben = 100% unverändert)
+--  Korrekte Version: Instance.new-Hook greift WÄHREND CreateWindow
 -- ================================================================
+
+-- Versteckten Container einmalig bestimmen
+local function _getHiddenParent()
+    if type(gethui) == "function" then
+        local ok, h = pcall(gethui)
+        if ok and h then return h end
+    end
+    local ok, _syn = pcall(function()
+        return rawget(getfenv and getfenv(0) or _ENV or {}, "syn")
+    end)
+    if ok and type(_syn) == "table" and type(_syn.protect_gui) == "function" then
+        return "USE_SYN"
+    end
+    local cok, cg = pcall(function() return game:GetService("CoreGui") end)
+    if cok then return cg end
+    return nil
+end
+
+local _hiddenParent = _getHiddenParent()
+
+-- Zufälliger Name pro Session (kein statischer "WindUI"-String)
+local function _randName(n)
+    local c = "abcdefghijklmnopqrstuvwxyz"
+    local s = ""
+    for i = 1, n do
+        local r = math.random(1, #c)
+        s = s .. c:sub(r, r)
+    end
+    return s
+end
+
+local function _applyProtect(sg)
+    if not sg then return end
+    pcall(function() sg.Name = _randName(10) end)
+    if _hiddenParent and _hiddenParent ~= "USE_SYN" then
+        pcall(function() sg.Parent = _hiddenParent end)
+    elseif _hiddenParent == "USE_SYN" then
+        local ok, _syn = pcall(function()
+            return rawget(getfenv and getfenv(0) or _ENV or {}, "syn")
+        end)
+        if ok and _syn and _syn.protect_gui then
+            pcall(_syn.protect_gui, _syn, sg)
+        end
+    end
+end
+
+-- CreateWindow wrappen:
+-- Kurz vor dem Aufruf wird Instance.new gehooked, damit WindUI's
+-- interne ScreenGui-Erstellung SOFORT in gethui() landet.
+-- Danach wird Instance.new SOFORT wiederhergestellt.
 do
     local _origCW = aa.CreateWindow
     function aa:CreateWindow(cfg, ...)
-        local win = _origCW(self, cfg, ...)
-        pcall(function()
-            local sg = self.ScreenGui
-            if not sg then return end
-            if gethui then
-                sg.Parent = gethui()
+        -- Hook aktiv schalten (nur während diesem Aufruf)
+        local _savedNew = Instance.new
+        Instance.new = function(cls, parent)
+            local obj = _savedNew(cls)
+            if cls == "ScreenGui" then
+                -- Name randomisieren & sofort in versteckten Container
+                pcall(function() obj.Name = _randName(10) end)
+                _applyProtect(obj)
             else
-                local ok, _syn = pcall(function()
-                    return rawget(getfenv and getfenv(0) or _ENV or {}, "syn")
-                end)
-                if ok and _syn and _syn.protect_gui then
-                    _syn.protect_gui(sg)
+                -- Alle anderen Objekte: normales Parenting
+                if parent then
+                    pcall(function() obj.Parent = parent end)
                 end
             end
+            return obj
+        end
+
+        -- WindUI CreateWindow aufrufen (nutzt jetzt unseren Hook)
+        local ok, win = pcall(_origCW, self, cfg, ...)
+
+        -- Hook SOFORT deaktivieren
+        Instance.new = _savedNew
+
+        if not ok then
+            error(win, 2)
+        end
+
+        -- Sicherheitsnetz: falls WindUI die Parent-Property danach überschreibt
+        pcall(function()
+            local sg = self.ScreenGui
+            _applyProtect(sg)
         end)
+
         return win
     end
 end
