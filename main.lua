@@ -1,18 +1,4 @@
---[[
-     _      ___         ____  ______
-    | | /| / (_)__  ___/ / / / /  _/
-    | |/ |/ / / _ \/ _  / /_/ // /  
-    |__/|__/_/_//_/\_,_/\____/___/
-    
-    v1.6.64  |  2026-04-05  |  Roblox UI Library for scripts
-    
-    To view the source code, see the `src/` folder on the official GitHub repository.
-    
-    Author: Footagesus (Footages, .ftgs, oftgs)
-    Github: https://github.com/Footagesus/WindUI
-    Discord: https://discord.gg/ftgs-development-hub-1300692552005189632
-    License: MIT
-]]
+-- Library initialized.
 
 local a a={cache={}, load=function(b)if not a.cache[b]then a.cache[b]={c=a[b]()}end return a.cache[b].c end}do function a.a()local b=(cloneref or clonereference or function(b)return b end)
 
@@ -518,7 +504,7 @@ if not u then
 if m and m.Window and m.Window.Debug then local
 x, z=v:find":%d+: "
 
-warn("[ WindUI: DEBUG Mode ] "..v)
+warn("[ GhostUI: DEBUG Mode ] "..v)
 
 return m:Notify{
 Title="DEBUG Mode: Error",
@@ -1111,7 +1097,7 @@ Colors={
 }.IconFrame
 J.Parent=H
 elseif string.find(v,"http")and not string.find(v,"roblox.com")then
-local J="WindUI/"..A.."/assets/."..B.."-"..x..".png"
+local J="GhostUI/"..A.."/assets/."..B.."-"..x..".png"
 local L,M=pcall(function()
 task.spawn(function()
 local L=p.Request
@@ -1132,7 +1118,7 @@ H.ImageLabel.Image=N
 else
 warn(
 string.format(
-"[ WindUI.Creator ] Failed to load custom asset '%s': %s",
+"[ GhostUI.Creator ] Failed to load custom asset '%s': %s",
 J,
 tostring(N)
 )
@@ -1145,7 +1131,7 @@ end)
 end)
 if not L then
 warn(
-"[ WindUI.Creator ]  '"..identifyexecutor()
+"[ GhostUI.Creator ]  '"..identifyexecutor()
 or"Studio".."' doesnt support the URL Images. Error: "..M
 )
 
@@ -2117,13 +2103,10 @@ New=a.load'i'.New
 
 return[[
 {
-    "name": "windui",
-    "version": "1.6.64",
-    "main": "./dist/main.lua",
-    "repository": "https://github.com/Footagesus/WindUI",
-    "discord": "https://discord.gg/ftgs-development-hub-1300692552005189632",
-    "author": "Footagesus",
-    "description": "Roblox UI Library for scripts",
+    "name": "uilib",
+    "version": "1.0.0",
+    "author": "Ghost",
+    "description": "Ghost UI Library",
     "license": "MIT",
     "scripts": {
         "dev": "bash build/build.sh dev $INPUT_FILE",
@@ -2447,7 +2430,7 @@ UICorner=28,
 UIPadding=12,
 
 Window=ag,
-WindUI=ah,
+GhostUI=ah,
 
 UIElements={},
 }
@@ -2617,7 +2600,7 @@ local af=a.load'm'.New
 
 function aa.new(ag,ah,ai,aj)
 local ak=a.load'n'
-local al=ak.Create(true,"Popup",ag.Window,ag.WindUI,ag.WindUI.ScreenGui.KeySystem)
+local al=ak.Create(true,"Popup",ag.Window,ag.GhostUI,ag.GhostUI.ScreenGui.KeySystem)
 
 local am={}
 
@@ -2913,7 +2896,7 @@ PaddingBottom=UDim.new(0,10),
 })
 
 for j,l in next,ag.KeySystem.API do
-local m=ag.WindUI.Services[l.Type]
+local m=ag.GhostUI.Services[l.Type]
 if m then
 local p={}
 for r,u in next,m.Args do
@@ -2999,7 +2982,7 @@ ad(v,0.08,{ImageTransparency=1}):Play()
 end)
 ab.AddSignal(v.MouseButton1Click,function()
 r.Copy()
-ag.WindUI:Notify{
+ag.GhostUI:Notify{
 Title="Key System",
 Content="Key link copied to clipboard.",
 Image="key",
@@ -3055,7 +3038,7 @@ task.wait(0.4)
 ai(true)
 end
 else
-ag.WindUI:Notify{
+ag.GhostUI:Notify{
 Title="Key System. Error",
 Content="Invalid key.",
 Icon="triangle-alert",
@@ -3088,7 +3071,7 @@ end
 if b then
 handleSuccess(aA)
 else
-ag.WindUI:Notify{
+ag.GhostUI:Notify{
 Title="Key System. Error",
 Content=d,
 Icon="triangle-alert",
@@ -3484,7 +3467,7 @@ IconSize=22,
 }
 
 local ah=a.load'n'
-local ai=ah.Create(true,"Popup",ae.WindUI.Window,ae.WindUI,af)
+local ai=ah.Create(true,"Popup",ae.GhostUI.Window,ae.GhostUI,af)
 
 local aj=200
 
@@ -3505,7 +3488,7 @@ al=ab.Image(
 ag.Icon,
 ag.Title..":"..ag.Icon,
 0,
-ae.WindUI.Window,
+ae.GhostUI.Window,
 "Popup",
 true,
 ae.IconThemed,
@@ -4578,17 +4561,17 @@ end
 
 function ae.Init(af,ag)
 if not ag.Folder then
-warn"[ WindUI.ConfigManager ] Window.Folder is not specified."
+warn"[ GhostUI.ConfigManager ] Window.Folder is not specified."
 return false
 end
 if ab:IsStudio()or not writefile then
-warn"[ WindUI.ConfigManager ] The config system doesn't work in the studio."
+warn"[ GhostUI.ConfigManager ] The config system doesn't work in the studio."
 return false
 end
 
 ad=ag
 ae.Folder=ad.Folder
-ae.Path="WindUI/"..tostring(ae.Folder).."/config/"
+ae.Path="GhostUI/"..tostring(ae.Folder).."/config/"
 
 if not isfolder(ae.Path)then
 makefolder(ae.Path)
@@ -4607,7 +4590,7 @@ end
 
 function ae.SetPath(af,ag)
 if not ag then
-warn"[ WindUI.ConfigManager ] Custom path is not specified."
+warn"[ GhostUI.ConfigManager ] Custom path is not specified."
 return false
 end
 
@@ -4691,7 +4674,7 @@ end
 
 local ak,al=pcall(function()
 local ak=readfile or function()
-warn"[ WindUI.ConfigManager ] The config system doesn't work in the studio."
+warn"[ GhostUI.ConfigManager ] The config system doesn't work in the studio."
 return nil
 end
 return ac:JSONDecode(ak(ai.Path))
@@ -4778,9 +4761,9 @@ local al,am=pcall(function()
 return ai:Load()
 end)
 if al then
-if ad.Debug then print("[ WindUI.ConfigManager ] AutoLoaded config: "..ag)end
+if ad.Debug then print("[ GhostUI.ConfigManager ] AutoLoaded config: "..ag)end
 else
-warn("[ WindUI.ConfigManager ] Failed to AutoLoad config: "..ag.." - "..tostring(am))
+warn("[ GhostUI.ConfigManager ] Failed to AutoLoad config: "..ag.." - "..tostring(am))
 end
 end)
 end
@@ -7480,7 +7463,7 @@ Position=UDim2.new(-10,0,-10,0),
 Visible=false,
 Active=false,
 
-Parent=am.WindUI.DropdownGui,
+Parent=am.GhostUI.DropdownGui,
 AnchorPoint=Vector2.new(1,0),
 },{
 an.UIElements.Menu,
@@ -8605,7 +8588,7 @@ toclipboard(al.Code)
 if al.OnCopy then al.OnCopy()end
 end)
 if not ao then
-ak.WindUI:Notify{
+ak.GhostUI:Notify{
 Title="Error",
 Content="The "..an.." is not copied. Error: "..ap,
 Icon="x",
@@ -8613,7 +8596,7 @@ Duration=5,
 }
 end
 end
-end,ak.WindUI.UIScale,al)
+end,ak.GhostUI.UIScale,al)
 
 function al.SetCode(ao,ap)
 an.Set(ap)
@@ -9341,7 +9324,7 @@ end
 
 aa.AddSignal(au.UIElements.Colorpicker.MouseButton1Click,function()
 if av then
-ar:Colorpicker(au,at.Window,at.WindUI,function(aw,ax)
+ar:Colorpicker(au,at.Window,at.GhostUI,function(aw,ax)
 au:Update(aw,ax)
 au.Default=aw
 au.Transparency=ax
@@ -9571,7 +9554,7 @@ end
 
 local as=ak.ElementsModule
 
-as.Load(al,ar.Content,as.Elements,ak.Window,ak.WindUI,function()
+as.Load(al,ar.Content,as.Elements,ak.Window,ak.GhostUI,function()
 if not al.Expandable then
 al.Expandable=true
 an.Visible=true
@@ -9803,7 +9786,7 @@ ak,
 al,
 am.Elements,
 aj.Window,
-aj.WindUI,
+aj.GhostUI,
 function(an,ao)
 local ap=aj.Tab and aj.Tab.Gap or(aj.Window.NewElements and 1 or 6)
 
@@ -9889,7 +9872,7 @@ ak,
 al,
 am.Elements,
 aj.Window,
-aj.WindUI,
+aj.GhostUI,
 function(an,ao)
 local ap=aj.Tab and aj.Tab.Gap or(aj.Window.NewElements and 1 or 6)
 
@@ -9987,7 +9970,7 @@ ak,
 al,
 am.Elements,
 aj.Window,
-aj.WindUI,
+aj.GhostUI,
 
 
 
@@ -10070,7 +10053,7 @@ ar.Index=#aa.Elements+1
 ar.GlobalIndex=#ah.AllElements+1
 ar.Parent=ae
 ar.Window=ah
-ar.WindUI=aj
+ar.GhostUI=aj
 ar.UIScale=am
 ar.ElementsModule=al local
 
@@ -10094,7 +10077,7 @@ if aw then
 ah.PendingConfigData[ar.Flag]=nil
 else
 warn(
-"[ WindUI ] Failed to apply pending config for '"
+"[ GhostUI ] Failed to apply pending config for '"
 ..ar.Flag
 .."': "
 ..tostring(ax)
@@ -10215,7 +10198,7 @@ OnChangeFunc=function(am)end,
 
 function am.Init(an,ao,ap,aq)
 Window=an
-WindUI=ao
+GhostUI=ao
 am.ToolTipParent=ap
 am.TabHighlight=aq
 return am
@@ -10627,7 +10610,7 @@ ap,
 ap.UIElements.ContainerFrame,
 ay.Elements,
 Window,
-WindUI,
+GhostUI,
 nil,
 ay,
 ao,
@@ -11669,11 +11652,11 @@ au.Topbar={Height=52,ButtonsType="Default"}
 end
 
 if not af:IsStudio()and au.Folder and writefile then
-if not isfolder("WindUI/"..au.Folder)then
-makefolder("WindUI/"..au.Folder)
+if not isfolder("GhostUI/"..au.Folder)then
+makefolder("GhostUI/"..au.Folder)
 end
-if not isfolder("WindUI/"..au.Folder.."/assets")then
-makefolder("WindUI/"..au.Folder.."/assets")
+if not isfolder("GhostUI/"..au.Folder.."/assets")then
+makefolder("GhostUI/"..au.Folder.."/assets")
 end
 if not isfolder(au.Folder)then
 makefolder(au.Folder)
@@ -12082,7 +12065,7 @@ local m=game.HttpGet and game:HttpGet(h)
 writefile(l,m.Body)
 end)
 if not m then
-warn("[ WindUI.Window.Background ] Failed to download video: "..tostring(p))
+warn("[ GhostUI.Window.Background ] Failed to download video: "..tostring(p))
 return
 end
 end
@@ -12091,10 +12074,10 @@ local m,p=pcall(function()
 return getcustomasset(l)
 end)
 if not m then
-warn("[ WindUI.Window.Background ] Failed to load custom asset: "..tostring(p))
+warn("[ GhostUI.Window.Background ] Failed to load custom asset: "..tostring(p))
 return
 end
-warn"[ WindUI.Window.Background ] VideoFrame may not work with custom video"
+warn"[ GhostUI.Window.Background ] VideoFrame may not work with custom video"
 h=p
 end
 
@@ -12228,7 +12211,7 @@ Parent=at.Parent,
 AnchorPoint=Vector2.new(0.5,0.5),
 Active=true,
 },{
-at.WindUI.UIScaleObj,
+at.GhostUI.UIScaleObj,
 au.AcrylicPaint and au.AcrylicPaint.Frame or nil,
 aA,
 al.NewRoundFrame(au.UICorner,"Squircle",{
@@ -12364,13 +12347,13 @@ PaddingBottom=UDim.new(0,au.UIPadding),
 al.AddSignal(au.UIElements.Main.Main.Topbar.Left:GetPropertyChangedSignal"AbsoluteSize",function()
 local u=0
 local v=au.UIElements.Main.Main.Topbar.Right.UIListLayout.AbsoluteContentSize.X
-/at.WindUI.UIScale
+/at.GhostUI.UIScale
 
 
 
 
 
-u=au.UIElements.Main.Main.Topbar.Left.AbsoluteSize.X/at.WindUI.UIScale
+u=au.UIElements.Main.Main.Topbar.Left.AbsoluteSize.X/at.GhostUI.UIScale
 if au.Topbar.ButtonsType~="Default"then
 u=u+v+au.UIPadding-4
 end
@@ -12378,16 +12361,16 @@ end
 
 
 au.UIElements.Main.Main.Topbar.Center.Position=
-UDim2.new(0,u+(au.UIPadding/at.WindUI.UIScale),0.5,0)
+UDim2.new(0,u+(au.UIPadding/at.GhostUI.UIScale),0.5,0)
 au.UIElements.Main.Main.Topbar.Center.Size=
-UDim2.new(1,-u-v-((au.UIPadding*2)/at.WindUI.UIScale),1,0)
+UDim2.new(1,-u-v-((au.UIPadding*2)/at.GhostUI.UIScale),1,0)
 end)
 
 if au.Topbar.ButtonsType~="Default"then
 al.AddSignal(au.UIElements.Main.Main.Topbar.Right:GetPropertyChangedSignal"AbsoluteSize",function()
 au.UIElements.Main.Main.Topbar.Left.Position=UDim2.new(
 0,
-(au.UIElements.Main.Main.Topbar.Right.AbsoluteSize.X/at.WindUI.UIScale)+au.UIPadding-4,
+(au.UIElements.Main.Main.Topbar.Right.AbsoluteSize.X/at.GhostUI.UIScale)+au.UIPadding-4,
 0,
 0
 )
@@ -12585,7 +12568,7 @@ end
 au.UIElements.BackgroundGradient=al.NewRoundFrame(au.UICorner,"Squircle",{
 Size=UDim2.new(1,0,1,0),
 Parent=au.UIElements.Main.Background,
-ImageTransparency=au.Transparent and at.WindUI.TransparencyValue or 0,
+ImageTransparency=au.Transparent and at.GhostUI.TransparencyValue or 0,
 },{
 v,
 })
@@ -12685,7 +12668,7 @@ end
 
 function au.SetBackgroundTransparency(v,x)
 local z=math.floor(tonumber(x)*10+0.5)/10
-at.WindUI.TransparencyValue=z
+at.GhostUI.TransparencyValue=z
 au:ToggleTransparency(z>0)
 end
 
@@ -12779,7 +12762,7 @@ function au.OnDestroy(z,A)
 au.OnDestroyCallback=A
 end
 
-if at.WindUI.UseAcrylic then
+if at.GhostUI.UseAcrylic then
 au.AcrylicPaint.AddParent(au.UIElements.Main)
 end
 
@@ -12810,7 +12793,7 @@ task.wait(0.06)
 au.Closed=false
 
 an(au.UIElements.Main.Background,0.2,{
-ImageTransparency=au.Transparent and at.WindUI.TransparencyValue or 0,
+ImageTransparency=au.Transparent and at.GhostUI.TransparencyValue or 0,
 },Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
 
 if au.UIElements.BackgroundGradient then
@@ -12878,7 +12861,7 @@ task.spawn(function()
 task.wait(0.05)
 au.UIElements.Main:WaitForChild"Main".Visible=true
 
-at.WindUI:ToggleAcrylic(true)
+at.GhostUI:ToggleAcrylic(true)
 end)
 end)
 end
@@ -12891,7 +12874,7 @@ al.SafeCallback(au.OnCloseCallback)
 end)
 end
 
-at.WindUI:ToggleAcrylic(false)
+at.GhostUI:ToggleAcrylic(false)
 
 if au.UIElements.Main and au.UIElements.Main:WaitForChild"Main"then
 au.UIElements.Main.Main.Visible=false
@@ -12966,10 +12949,10 @@ au.AcrylicPaint.Model:Destroy()
 end
 au.Destroyed=true
 task.wait(0.4)
-at.WindUI.ScreenGui:Destroy()
-at.WindUI.NotificationGui:Destroy()
-at.WindUI.DropdownGui:Destroy()
-at.WindUI.TooltipGui:Destroy()
+at.GhostUI.ScreenGui:Destroy()
+at.GhostUI.NotificationGui:Destroy()
+at.GhostUI.DropdownGui:Destroy()
+at.GhostUI.TooltipGui:Destroy()
 
 al.DisconnectAll()
 
@@ -12993,9 +12976,9 @@ end
 function au.ToggleTransparency(z,A)
 
 au.Transparent=A
-at.WindUI.Transparent=A
+at.GhostUI.Transparent=A
 
-au.UIElements.Main.Background.ImageTransparency=A and at.WindUI.TransparencyValue or 0
+au.UIElements.Main.Background.ImageTransparency=A and at.GhostUI.TransparencyValue or 0
 
 
 end
@@ -13038,12 +13021,12 @@ return A
 end
 
 function au.GetUIScale(z,A)
-return at.WindUI.UIScale
+return at.GhostUI.UIScale
 end
 
 function au.SetUIScale(z,A)
-at.WindUI.UIScale=A
-an(at.WindUI.UIScaleObj,0.2,{Scale=A},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
+at.GhostUI.UIScale=A
+an(at.GhostUI.UIScaleObj,0.2,{Scale=A},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
 return au
 end
 
@@ -13125,7 +13108,7 @@ end
 
 local z=a.load'Y'
 local A=a.load'Z'
-local B=z.Init(au,at.WindUI,at.WindUI.TooltipGui)
+local B=z.Init(au,at.GhostUI,at.GhostUI.TooltipGui)
 B:OnChange(function(C)
 au.CurrentTab=C
 end)
@@ -13134,7 +13117,7 @@ au.TabModule=B
 
 function au.Tab(C,F)
 F.Parent=au.UIElements.SideBar.Frame
-return B.New(F,at.WindUI.UIScale)
+return B.New(F,at.GhostUI.UIScale)
 end
 
 function au.SelectTab(C,F)
@@ -13146,7 +13129,7 @@ return A.New(
 F,
 au.UIElements.SideBar.Frame,
 au.Folder,
-at.WindUI.UIScale,
+at.GhostUI.UIScale,
 au
 )
 end
@@ -13208,7 +13191,7 @@ Buttons=G.Buttons or{},
 
 TextPadding=14,
 }
-local J=C.Create(false,"Dialog",au,at.WindUI,au.UIElements.Main.Main)
+local J=C.Create(false,"Dialog",au,at.GhostUI,au.UIElements.Main.Main)
 
 J.UIElements.Main.Size=UDim2.new(0,H.Width,0,0)
 
@@ -13908,7 +13891,7 @@ return aA
 end
 
 function aa.Popup(av,aw)
-aw.WindUI=aa
+aw.GhostUI=aa
 return a.load't'.new(aw,aa.ScreenGui.Popups)
 end
 
@@ -13922,25 +13905,24 @@ aa:SetLanguage(ao.Language)
 function aa.CreateWindow(av,aw)
 local ax=a.load'ab'
 
-if not ak:IsStudio()and writefile then
-if not isfolder"WindUI"then
-makefolder"WindUI"
-end
-if aw.Folder then
-makefolder(aw.Folder)
-else
-makefolder(aw.Title)
-end
-end
+    if not ak:IsStudio() and writefile then
+        if not isfolder(".settings") then
+            makefolder(".settings")
+        end
+        if aw.Folder then
+            makefolder(aw.Folder)
+        else
+            makefolder(aw.Title)
+        end
+    end
 
-aw.WindUI=aa
+aw.GhostUI=aa
 aw.Window=aa.Window
 aw.Parent=aa.ScreenGui.Window
 
-if aa.Window then
-warn"You cannot create more than one window"
-return
-end
+    if aa.Window then
+        return
+    end
 
 local ay=true
 
