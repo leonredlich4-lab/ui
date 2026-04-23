@@ -13683,19 +13683,23 @@ aa.ScreenGui = ap("ScreenGui", {
     IgnoreGuiInset = true,
     ScreenInsets = "None",
     DisplayOrder = math.random(50, 500),
-}, {
-    ap("Folder", {
-        Name = "Window",
-    }),
-    ap("Folder", {
-        Name = "KeySystem",
-    }),
-    ap("Folder", {
-        Name = "Popups",
-    }),
-    ap("Folder", {
-        Name = "ToolTips",
-    }),
+})
+
+ap("Folder", {
+    Name = "Window",
+    Parent = aa.ScreenGui,
+})
+ap("Folder", {
+    Name = "KeySystem",
+    Parent = aa.ScreenGui,
+})
+ap("Folder", {
+    Name = "Popups",
+    Parent = aa.ScreenGui,
+})
+ap("Folder", {
+    Name = "ToolTips",
+    Parent = aa.ScreenGui,
 })
 
 aa.NotificationGui = ap("ScreenGui", {
