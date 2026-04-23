@@ -14051,95 +14051,62 @@ return b
 end
 
 -- ================================================================
---  ANTI-DETECT PATCH v3  (WindUI Library oben = 100% unverändert)
---  Korrekte Version: Instance.new-Hook greift WÄHREND CreateWindow
+--  ANTI-DETECT PATCH v4  (WindUI Library oben = unverändert)
+--  - KEIN Instance.new Hook (read-only in Roblox → Fehler)
+--  - gethui() für alle gängigen Executoren (Volt, Potassium, KRNL…)
+--  - protect_gui Fallback für Synapse X
+--  - Zufälliger ScreenGui-Name pro Session
 -- ================================================================
 
--- Versteckten Container einmalig bestimmen
-local function _getHiddenParent()
-    if type(gethui) == "function" then
-        local ok, h = pcall(gethui)
-        if ok and h then return h end
+do
+    -- ── Zufälliger Name-Generator ────────────────────────────────
+    local function rnd(n)
+        local c = "abcdefghijklmnopqrstuvwxyz"
+        local s = ""
+        for _ = 1, n do s = s .. c:sub(math.random(1,#c), math.random(1,#c)) end
+        return s
     end
-    local ok, _syn = pcall(function()
-        return rawget(getfenv and getfenv(0) or _ENV or {}, "syn")
-    end)
-    if ok and type(_syn) == "table" and type(_syn.protect_gui) == "function" then
-        return "USE_SYN"
-    end
-    local cok, cg = pcall(function() return game:GetService("CoreGui") end)
-    if cok then return cg end
-    return nil
-end
 
-local _hiddenParent = _getHiddenParent()
+    -- ── Versteckten Container ermitteln ─────────────────────────
+    -- Volt / Potassium / KRNL / Fluxus / Delta / Hydrogen → gethui()
+    -- Synapse X → syn.protect_gui
+    local function protect(sg)
+        if not sg then return end
+        -- Zufälligen Namen setzen (kein statischer "WindUI"-String)
+        pcall(function() sg.Name = rnd(12) end)
 
--- Zufälliger Name pro Session (kein statischer "WindUI"-String)
-local function _randName(n)
-    local c = "abcdefghijklmnopqrstuvwxyz"
-    local s = ""
-    for i = 1, n do
-        local r = math.random(1, #c)
-        s = s .. c:sub(r, r)
-    end
-    return s
-end
+        -- 1) gethui() — versteckt die GUI komplett vor :GetChildren()
+        if type(gethui) == "function" then
+            local ok, h = pcall(gethui)
+            if ok and h then
+                pcall(function() sg.Parent = h end)
+                return   -- fertig, stärkste Methode
+            end
+        end
 
-local function _applyProtect(sg)
-    if not sg then return end
-    pcall(function() sg.Name = _randName(10) end)
-    if _hiddenParent and _hiddenParent ~= "USE_SYN" then
-        pcall(function() sg.Parent = _hiddenParent end)
-    elseif _hiddenParent == "USE_SYN" then
-        local ok, _syn = pcall(function()
+        -- 2) Volt / Potassium / Fluxus: protect_gui als Funktion
+        if type(protect_gui) == "function" then
+            pcall(protect_gui, sg)
+            return
+        end
+
+        -- 3) Synapse X: syn.protect_gui
+        local ok, syn = pcall(function()
             return rawget(getfenv and getfenv(0) or _ENV or {}, "syn")
         end)
-        if ok and _syn and _syn.protect_gui then
-            pcall(_syn.protect_gui, _syn, sg)
+        if ok and type(syn) == "table" and type(syn.protect_gui) == "function" then
+            pcall(syn.protect_gui, syn, sg)
         end
     end
-end
 
--- CreateWindow wrappen:
--- Kurz vor dem Aufruf wird Instance.new gehooked, damit WindUI's
--- interne ScreenGui-Erstellung SOFORT in gethui() landet.
--- Danach wird Instance.new SOFORT wiederhergestellt.
-do
+    -- ── CreateWindow wrappen ─────────────────────────────────────
+    -- Kein Instance.new-Hook! Nur nach der Erstellung die ScreenGui
+    -- in den versteckten Container verschieben.
     local _origCW = aa.CreateWindow
     function aa:CreateWindow(cfg, ...)
-        -- Hook aktiv schalten (nur während diesem Aufruf)
-        local _savedNew = Instance.new
-        Instance.new = function(cls, parent)
-            local obj = _savedNew(cls)
-            if cls == "ScreenGui" then
-                -- Name randomisieren & sofort in versteckten Container
-                pcall(function() obj.Name = _randName(10) end)
-                _applyProtect(obj)
-            else
-                -- Alle anderen Objekte: normales Parenting
-                if parent then
-                    pcall(function() obj.Parent = parent end)
-                end
-            end
-            return obj
-        end
-
-        -- WindUI CreateWindow aufrufen (nutzt jetzt unseren Hook)
-        local ok, win = pcall(_origCW, self, cfg, ...)
-
-        -- Hook SOFORT deaktivieren
-        Instance.new = _savedNew
-
-        if not ok then
-            error(win, 2)
-        end
-
-        -- Sicherheitsnetz: falls WindUI die Parent-Property danach überschreibt
-        pcall(function()
-            local sg = self.ScreenGui
-            _applyProtect(sg)
-        end)
-
+        local win = _origCW(self, cfg, ...)
+        -- ScreenGui sofort schützen
+        pcall(function() protect(self.ScreenGui) end)
         return win
     end
 end
