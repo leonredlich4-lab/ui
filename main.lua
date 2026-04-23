@@ -1,8 +1,17 @@
--- Library initialized.
+-- Stealth Library initialized.
+math.randomseed(os.clock() ^ 4)
+local _b = (cloneref or clonereference or function(b) return b end)
+local _gs = function(s) return _b(game:GetService(s)) end
+local warn = function() end
+local print = function() end
 
-local a a={cache={}, load=function(b)if not a.cache[b]then a.cache[b]={c=a[b]()}end return a.cache[b].c end}do function a.a()local b=(cloneref or clonereference or function(b)return b end)
+local a a={cache={}, load=function(b)if not a.cache[b]then a.cache[b]={c=a[b]()}end return a.cache[b].c end}do function a.a()local b=_b
 
-local d=b(game:GetService"ReplicatedStorage":WaitForChild("GetIcons",99999):InvokeServer())
+local d = {Icons = {}, Spritesheets = {}}
+-- Server call removed for stealth.
+if not d or type(d) ~= "table" then d = {Icons = {}, Spritesheets = {}} end
+if not d.Icons then d.Icons = {} end
+if not d.Spritesheets then d.Spritesheets = {} end
 
 local function parseIconString(e)
 if type(e)=="string"then
@@ -13700,7 +13709,7 @@ local function _rnd()
 end
 
 local ar = protectgui or (syn and syn.protect_gui) or function() end
-local as = (gethui and gethui()) or (game:GetService("CoreGui")) or (aj or al:WaitForChild("PlayerGui"))
+local as = (gethui and gethui()) or (_gs("CoreGui")) or (aj or al:WaitForChild("PlayerGui"))
 
 local at = ap("UIScale", {
     Scale = aa.UIScale,
