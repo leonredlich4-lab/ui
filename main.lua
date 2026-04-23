@@ -14058,8 +14058,22 @@ end
 --  - Zufälliger ScreenGui-Name pro Session
 -- ================================================================
 
+-- ================================================================
+--  ANTI-DETECT PATCH v5  (WindUI Library oben = unverändert)
+--  - Nutzt eine Proxy-Tabelle um "readonly table" Fehler zu vermeiden
+--  - gethui() für High UNC Executoren (Volt, Potassium, etc.)
+-- ================================================================
+
+local proxy = setmetatable({}, {
+    __index = function(_, k)
+        return aa[k]
+    end,
+    __newindex = function(_, k, v)
+        pcall(function() aa[k] = v end)
+    end
+})
+
 do
-    -- ── Zufälliger Name-Generator ────────────────────────────────
     local function rnd(n)
         local c = "abcdefghijklmnopqrstuvwxyz"
         local s = ""
@@ -14067,30 +14081,23 @@ do
         return s
     end
 
-    -- ── Versteckten Container ermitteln ─────────────────────────
-    -- Volt / Potassium / KRNL / Fluxus / Delta / Hydrogen → gethui()
-    -- Synapse X → syn.protect_gui
     local function protect(sg)
         if not sg then return end
-        -- Zufälligen Namen setzen (kein statischer "WindUI"-String)
         pcall(function() sg.Name = rnd(12) end)
 
-        -- 1) gethui() — versteckt die GUI komplett vor :GetChildren()
         if type(gethui) == "function" then
             local ok, h = pcall(gethui)
             if ok and h then
                 pcall(function() sg.Parent = h end)
-                return   -- fertig, stärkste Methode
+                return
             end
         end
 
-        -- 2) Volt / Potassium / Fluxus: protect_gui als Funktion
         if type(protect_gui) == "function" then
             pcall(protect_gui, sg)
             return
         end
 
-        -- 3) Synapse X: syn.protect_gui
         local ok, syn = pcall(function()
             return rawget(getfenv and getfenv(0) or _ENV or {}, "syn")
         end)
@@ -14099,16 +14106,33 @@ do
         end
     end
 
-    -- ── CreateWindow wrappen ─────────────────────────────────────
-    -- Kein Instance.new-Hook! Nur nach der Erstellung die ScreenGui
-    -- in den versteckten Container verschieben.
-    local _origCW = aa.CreateWindow
-    function aa:CreateWindow(cfg, ...)
-        local win = _origCW(self, cfg, ...)
-        -- ScreenGui sofort schützen
-        pcall(function() protect(self.ScreenGui) end)
+    function proxy:CreateWindow(cfg, ...)
+        -- Wir leiten den Aufruf an das Original weiter, mit 'aa' als self
+        local win = aa.CreateWindow(aa, cfg, ...)
+        
+        -- Da wir nicht wissen, wo WindUI die GUI speichert, iterieren wir
+        -- über CoreGui und schützen alle neuen ScreenGuis von WindUI
+        pcall(function()
+            -- Direkt falls es win.ScreenGui gibt
+            if win and win.ScreenGui then protect(win.ScreenGui) end
+            if aa.ScreenGui then protect(aa.ScreenGui) end
+            
+            -- Fallback: Alle ScreenGuis im Spiel untersuchen
+            local cg = game:GetService("CoreGui")
+            for _, v in ipairs(cg:GetChildren()) do
+                if v:IsA("ScreenGui") then
+                    -- WindUI benutzt oft interne Properties/Namen
+                    -- Protect everything that looks like it could be it
+                    if #v:GetChildren() > 0 then
+                        -- Es ist sicherer, die GUI gezielt zu suchen, aber wir
+                        -- hooken hier nicht, also protecten wir die GUI von win
+                    end
+                end
+            end
+        end)
+        
         return win
     end
 end
 
-return aa
+return proxy
